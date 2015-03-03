@@ -13,7 +13,8 @@
             id = $el.data('youtube-id'),
             aspectRatio = ['16', '9'],
             paddingTop = 0,
-            youtubeParameters = $el.data('parameters') || '';
+            youtubeParameters = $el.data('parameters') || '',
+            protocol = (document.location.protocol === 'https' ? 'https' : 'http');
 
         if (typeof width === 'undefined' || typeof height === 'undefined') {
           height = 0;
@@ -27,21 +28,21 @@
             'height': height,
             'width': width,
             'padding-top': paddingTop,
-            'background': 'url(http://img.youtube.com/vi/' + id + '/hqdefault.jpg) center center no-repeat',
+            'background': 'url(' + protocol + '://img.youtube.com/vi/' + id + '/hqdefault.jpg) center center no-repeat',
             'cursor': 'pointer',
             'background-size': 'cover'
         })
             .html('<p id="lazyYT-title-' + id + '" class="lazyYT-title"></p><div class="lazyYT-button"></div>')
             .addClass('lazyYT-image-loaded');
 
-        $.getJSON('https://gdata.youtube.com/feeds/api/videos/' + id + '?v=2&alt=json', function (data) {
+        $.getJSON(protocol + '://gdata.youtube.com/feeds/api/videos/' + id + '?v=2&alt=json', function (data) {
             $('#lazyYT-title-' + id).text(data.entry.title.$t);
         });
 
         $el.on('click', function (e) {
             e.preventDefault();
             if (!$el.hasClass('lazyYT-video-loaded') && $el.hasClass('lazyYT-image-loaded')) {
-                $el.html('<iframe width="' + width + '" height="' + height + '" src="//www.youtube.com/embed/"' + id + '?autoplay=1&' + youtubeParameters + '" style="position:absolute; top:0; left:0; width:100%; height:100%;" frameborder="0" allowfullscreen></iframe>')
+                $el.html('<iframe width="' + width + '" height="' + height + '" src="' + protocol + '://www.youtube.com/embed/' + id + '?autoplay=1&' + youtubeParameters + '" style="position:absolute; top:0; left:0; width:100%; height:100%;" frameborder="0" allowfullscreen></iframe>')
                     .removeClass('lazyYT-image-loaded')
                     .addClass('lazyYT-video-loaded');
             }
